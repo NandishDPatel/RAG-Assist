@@ -1,1 +1,4 @@
 fastapi
+pinecone
+dotenv
+pypdf
