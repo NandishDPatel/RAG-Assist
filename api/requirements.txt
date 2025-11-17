@@ -2,3 +2,10 @@ fastapi
 pinecone
 dotenv
 pypdf
+arxiv 
+pymupdf
+google-cloud-speech
+uvicorn
+sounddevice
+scipy
+numpy
