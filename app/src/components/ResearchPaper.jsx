@@ -62,7 +62,7 @@ const ResearchPaperSearch = ({ onDocumentReady }) => {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Enter research topic, keywords, or paper title..."
           className="input-field flex-1"
-          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+          onKeyUp={(e) => e.key === 'Enter' && handleSearch()}
         />
         <button
           onClick={handleSearch}

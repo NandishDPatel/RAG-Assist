@@ -9,3 +9,8 @@ uvicorn
 sounddevice
 scipy
 numpy
+python-multipart
+transformers
+sentence-transformers
+langchain-openai
+langchain

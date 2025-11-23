@@ -34,9 +34,13 @@ const DocumentUpload = ({ onDocumentReady }) => {
         })
       }, 200)
 
+      console.log(selectedFile);
+
       // Upload to backend
       const documentData = await uploadDocumentToPinecone(selectedFile)
       
+      console.log('PDF uploaded !!')
+
       clearInterval(progressInterval)
       setUploadProgress(100)
 
@@ -46,6 +50,7 @@ const DocumentUpload = ({ onDocumentReady }) => {
         file: selectedFile,
         data: documentData
       })
+      console.log("Document id is :",documentData.documentId);
 
     } catch (error) {
       console.error('Upload failed:', error)
