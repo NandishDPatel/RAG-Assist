@@ -2,8 +2,63 @@
 @tailwind components;
 @tailwind utilities;
 
-:root{
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@layer base {
+  body {
+    background-color: theme('colors.gray.50');
+    color: theme('colors.gray.900');
+  }
+}
+
+@layer components {
+  .btn-primary {
+    background-color: theme('colors.primary.600');
+    color: white;
+    font-weight: theme('fontWeight.medium');
+    padding: theme('spacing.2') theme('spacing.4');
+    border-radius: theme('borderRadius.lg');
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+  }
+  
+  .btn-primary:hover {
+    background-color: theme('colors.primary.700');
+  }
+  
+  .btn-secondary {
+    background-color: theme('colors.gray.200');
+    color: theme('colors.gray.800');
+    font-weight: theme('fontWeight.medium');
+    padding: theme('spacing.2') theme('spacing.4');
+    border-radius: theme('borderRadius.lg');
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+  }
+  
+  .btn-secondary:hover {
+    background-color: theme('colors.gray.300');
+  }
+  
+  .card {
+    background-color: white;
+    border-radius: theme('borderRadius.xl');
+    box-shadow: theme('boxShadow.sm');
+    border: 1px solid theme('colors.gray.200');
+    padding: theme('spacing.6');
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: theme('spacing.3') theme('spacing.4');
+    border: 1px solid theme('colors.gray.300');
+    border-radius: theme('borderRadius.lg');
+    outline: none;
+    transition: all 200ms;
+  }
+  
+  .input-field:focus {
+    box-shadow: 0 0 0 2px theme('colors.primary.500');
+    border-color: transparent;
+  }
 }

@@ -1,1 +1,17 @@
 fastapi
+pinecone
+dotenv
+pypdf
+arxiv 
+pypdf
+google-cloud-speech
+uvicorn
+sounddevice
+scipy
+numpy
+python-multipart
+transformers
+sentence-transformers
+langchain-openai
+langchain
+tqdm
