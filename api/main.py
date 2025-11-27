@@ -10,7 +10,7 @@ from agents.voice_agent import start_recording, stop_recording
 from rag.retriever import RAGRetriever
 
 
-app = FastAPI(title="Document Chat API", version="1.0.0")
+app = FastAPI(title="Rag Assist Backend", version="1.0.0")
 
 # CORS middleware
 app.add_middleware(
@@ -23,25 +23,13 @@ app.add_middleware(
 
 pdf_processor = PDFProcessor()
 
-rag_retriever = RAGRetriever()
-
 rag = RAGRetriever()
+
 
 @app.get("/")
 async def root():
     return {"message": "Document Chat API is running"}
 
-
-@app.get("/api/health")
-async def health_check():
-    rag_status = (
-        "initialized" if rag_retriever and rag_retriever.model_loaded else "failed"
-    )
-    return {
-        "status": "healthy",
-        "message": "API is running",
-        "rag_retriever": rag_status,
-    }
 
 @app.get("/api/search/arxiv")
 async def search_arxiv_papers(query: str, max_results: int = 3):
@@ -62,15 +50,24 @@ async def upload_pdf_file(file: UploadFile = File(...)):
         if not file.filename.lower().endswith(".pdf"):
             raise HTTPException(status_code=400, detail="Only PDF files are allowed")
 
+        # Extract document ID from filename (remove .pdf extension)
+        document_id = file.filename.replace(".pdf", "").strip()
+
+        # Check if pdf already exists in Pinecone
+        if PDFProcessor.namespace_exists(document_id):
+            print("PDF already exists")
+            return {
+                "success": True,
+                "message": "PDF already uploaded — skipping",
+                "document_id": document_id,
+                "skipped": True,
+            }
+
         # Save uploaded file temporarily
         with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp_file:
             content = await file.read()
             tmp_file.write(content)
             tmp_file_path = tmp_file.name
-
-
-        # Extract document ID from filename (remove .pdf extension)
-        document_id = file.filename.replace(".pdf", "").strip()
 
         # Process PDF and upload to Pinecone
         chunks = pdf_processor.pdf_to_pinecone(tmp_file_path, document_id)
@@ -79,7 +76,6 @@ async def upload_pdf_file(file: UploadFile = File(...)):
             "success": True,
             "message": "PDF processed successfully",
             "document_id": document_id,
-            "chunks_uploaded": len(chunks),
             "filename": file.filename,
         }
         return response
@@ -105,9 +101,22 @@ async def upload_arxiv_paper(paper_data: dict):
         if not paper_id:
             raise HTTPException(status_code=400, detail="Paper ID is required")
 
+        # Use paper ID as document_id
+        document_id = paper_id
+
+        # Check if pdf already exists in Pinecone
+        if PDFProcessor.namespace_exists(document_id):
+            print("Arxiv Paper already exists")
+            return {
+                "success": True,
+                "message": "Research paper already uploaded in Pinecone",
+                "document_id": document_id,
+                "skipped": True,
+            }
+
         import requests
 
-        response = requests.get(pdf_url, timeout=45)
+        response = requests.get(pdf_url, timeout=None)
         response.raise_for_status()
 
         # Save downloaded PDF temporarily
@@ -115,10 +124,6 @@ async def upload_arxiv_paper(paper_data: dict):
             tmp_file.write(response.content)
             tmp_file_path = tmp_file.name
 
- 
-        # Use paper ID as document_id (CRITICAL for consistency!)
-        document_id = paper_id
- 
         # Process arXiv PDF and upload to Pinecone
         chunks = pdf_processor.pdf_to_pinecone(tmp_file_path, document_id)
 
@@ -134,12 +139,13 @@ async def upload_arxiv_paper(paper_data: dict):
         return result
 
     except Exception as e:
-        
+
         raise HTTPException(status_code=500, detail=f"arXiv upload failed: {str(e)}")
     finally:
         if tmp_file_path and os.path.exists(tmp_file_path):
             os.unlink(tmp_file_path)
-            
+
+
 @app.post("/api/voice/start-recording")
 async def api_start_recording():
     try:

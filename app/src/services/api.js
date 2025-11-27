@@ -1,63 +1,61 @@
-import axios from 'axios'
+import axios from "axios";
 
-const API_BASE_URL = 'http://localhost:8000/api'
+const API_BASE_URL = "http://localhost:8000/api";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 30000,
-})
+});
 
-// Search arXiv papers
 export const searchArxivPapers = async (query) => {
-  const response = await api.get('/search/arxiv', {
-    params: { query, max_results: 3 }
-  })
-  return response.data.papers
-}
+  const response = await api.get("/search/arxiv", {
+    params: { query, max_results: 3 },
+  });
+  return response.data.papers;
+};
 
 export const uploadDocumentToPinecone = async (file) => {
-  const formData = new FormData()
-  formData.append('file', file)
-  
-  const response = await api.post('/upload/pdf', formData, {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await api.post("/upload/pdf", formData, {
     timeout: 0, //remove the 30 seconds axios limit
     headers: {
-      'Content-Type': 'multipart/form-data',
+      "Content-Type": "multipart/form-data",
     },
-  })
-  return response.data
-}
+  });
+  return response.data;
+};
 
 export const uploadPaperToPinecone = async (paper) => {
-  const response = await api.post('/upload/arxiv', paper)
-  return response.data
-}
+  const response = await api.post("/upload/arxiv", paper,{
+    timeout: 0,
+  });
+
+  return response.data;
+};
 
 export const startVoiceRecording = async () => {
-  const response = await api.post('/voice/start-recording')
-  return response.data
-}
+  const response = await api.post("/voice/start-recording");
+  return response.data;
+};
 
 export const stopVoiceRecording = async () => {
-  const response = await api.post('/voice/stop-recording')
-  return response.data
-}
+  const response = await api.post("/voice/stop-recording");
+  return response.data;
+};
 
-// Send chat message
 export const sendChatMessage = async (message, documentId) => {
   console.log(documentId);
-  const response = await api.post('/chat', {
+  const response = await api.post("/chat", {
     message,
-    documentId
-  })
+    documentId,
+  });
 
-  return response.data
-}
+  return response.data;
+};
 
-// Health check
-export const healthCheck = async () => {
-  const response = await api.get('/health')
-  return response.data
-}
+export const checkDocExists = async (docId) => {
+  return true;
+};
 
-export default api
+export default api;

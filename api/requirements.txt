@@ -3,7 +3,7 @@ pinecone
 dotenv
 pypdf
 arxiv 
-pymupdf
+pypdf
 google-cloud-speech
 uvicorn
 sounddevice
@@ -14,3 +14,4 @@ transformers
 sentence-transformers
 langchain-openai
 langchain
+tqdm

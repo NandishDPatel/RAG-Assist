@@ -1,11 +1,6 @@
 import arxiv
 
 def fetch_arxiv_papers(query: str, max_results: int = 3):
-    """
-    Search arXiv for research papers
-    """
-    print(f"🔍 Searching arXiv for: {query}")
-    
     try:
         client = arxiv.Client()
         search = arxiv.Search(
@@ -28,20 +23,8 @@ def fetch_arxiv_papers(query: str, max_results: int = 3):
             }
             papers.append(paper_info)
         
-        print(f"✅ Found {len(papers)} papers")
         return papers
         
     except Exception as e:
-        print(f"❌ Error fetching arXiv papers: {e}")
+        print(f"Error fetching arXiv papers: {e}")
         return []
-
-def print_papers(papers):
-    """
-    Print papers for debugging
-    """
-    print("📚 Top PDF results:")
-    for i, paper in enumerate(papers, 1):
-        print(f"{i}. {paper['title']}")
-        print(f"   Authors: {', '.join(paper['authors'][:3])}")
-        print(f"   PDF: {paper['pdf_url']}")
-        print()
